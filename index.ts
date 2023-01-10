@@ -1,6 +1,5 @@
 
 
-import { readTable } from './data-access/read-table';
 import { ItemFeed } from './dtos/item-feed.dto';
 import { Repository } from './repository/repository';
 
