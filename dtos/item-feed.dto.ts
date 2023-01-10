@@ -1,17 +1,18 @@
 // import { Column } from "../decorators/column.decorator";
 import { EntityTable, FeedTable } from "../decorators/entity-table.decorator";
 import { ObjectLiteral, SecondaryIndex } from "../decorators/secondary-index.decorator";
+import { Repository } from "../repository/repository";
 
 export class BaseDto {
-    PK!: string;
-    SK!: string;
+    PK?: string;
+    SK?: string;
     LSI1?: string;
     LSI2?: string;
     LSI3?: string;
     GSI1PK?: string;
     GSI1SK?: string;
-    createdAt!: string;
-    updatedAt!: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 @EntityTable({
@@ -42,13 +43,23 @@ export class BaseDto {
 export class ItemFeed {
     static readonly entity: string = 'ItemFeed';
     constructor(
-        readonly userId?: string,
-        readonly priority?: number,
-        readonly itemId?: string,
-        readonly createdAt?: Date,
-        readonly populatedInfo?: ObjectLiteral<any>,
-        readonly itemType?: string,
-        readonly itemCategory?: string,
-        readonly itemBuildFromId?: string,
-    ){ }
+        public userId?: string,
+        public priority?: number,
+        public itemId?: string,
+        public createdAt?: Date,
+        public updatedAt?: Date,
+        public populatedInfo?: ObjectLiteral<any>,
+        public itemType?: string,
+        public itemCategory?: string,
+        public itemBuildFromId?: string,
+    ) { }
+
+
+    static async getUserItemFeed(
+        repository: Repository<ItemFeed>,
+        userId: string,
+    ): Promise<ItemFeed> {
+        const queryResult = await repository.read<ItemFeed>(ItemFeed, { userId }, {}, []);
+        return queryResult[0] ?? null;
+    }
 }
