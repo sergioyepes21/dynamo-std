@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    /* Modules */
+    "target": "es2017",      
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  }
+}
