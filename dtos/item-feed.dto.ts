@@ -1,47 +1,38 @@
 // import { Column } from "../decorators/column.decorator";
+import { BaseEntity } from "../common/base-entity";
+import { ObjectLiteral } from "../common/object-literal";
 import { EntityTable, FeedTable } from "../decorators/entity-table.decorator";
-import { ObjectLiteral, SecondaryIndex } from "../decorators/secondary-index.decorator";
 import { Repository } from "../repository/repository";
 
-export class BaseDto {
-    PK?: string;
-    SK?: string;
-    LSI1?: string;
-    LSI2?: string;
-    LSI3?: string;
-    GSI1PK?: string;
-    GSI1SK?: string;
-    createdAt?: string;
-    updatedAt?: string;
-}
 
 @EntityTable({
     table: new FeedTable(),
+    entity: 'ItemFeed',
     keyMap: {
-        PK: 'userId#entity',
-        SK: 'priority#itemId',
+        PK: ['userId', 'entity'],
+        SK: ['priority', 'itemId'],
     },
     secondaryIndexMap: {
-        "PK-GSI1SK-index": {
-            PK: 'userId#entity',
-            SK: 'itemId',
+        "GSI1": {
+            PK: ['userId', 'entity'],
+            SK: ['itemId'],
         },
-        "PK-GSI2SK-index": {
-            PK: 'userId#entity',
-            SK: 'itemType#priority#itemId',
+        "GSI2": {
+            PK: ['userId', 'entity'],
+            SK: ['itemType', 'priority', 'itemId'],
         },
-        "PK-GSI3SK-index": {
-            PK: 'userId#entity',
-            SK: 'itemCategory#priority#itemId',
+        "GSI3": {
+            PK: ['userId', 'entity'],
+            SK: ['itemCategory', 'priority', 'itemId'],
+            optional: true,
         },
-        "GSI4PK-GSI4SK-index": {
-            PK: 'itemId',
-            SK: 'updatedAt#userId',
+        "GSI4": {
+            PK: ['itemId'],
+            SK: ['updatedAt', 'userId'],
         },
     },
 })
-export class ItemFeed {
-    static readonly entity: string = 'ItemFeed';
+export class ItemFeed extends BaseEntity {
     constructor(
         public userId?: string,
         public priority?: number,
@@ -52,7 +43,9 @@ export class ItemFeed {
         public itemType?: string,
         public itemCategory?: string,
         public itemBuildFromId?: string,
-    ) { }
+    ) {
+        super();
+    }
 
 
     static async getUserItemFeed(
@@ -61,5 +54,12 @@ export class ItemFeed {
     ): Promise<ItemFeed> {
         const queryResult = await repository.read<ItemFeed>(ItemFeed, { userId }, {}, []);
         return queryResult[0] ?? null;
+    }
+
+    static async create(
+        repository: Repository<ItemFeed>,
+        itemToCreate: ItemFeed,
+    ): Promise<ItemFeed> {
+        return repository.create<ItemFeed>(ItemFeed, itemToCreate);
     }
 }

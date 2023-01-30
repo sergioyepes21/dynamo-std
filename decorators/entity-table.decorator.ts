@@ -3,11 +3,18 @@ import { SecondaryIndexInterface } from "./secondary-index.decorator";
 export const entityTableSymbol = Symbol("EntityTableSymbol");
 
 export type AllowedTableSecondaryIndexes = |
-    'PK-GSI1SK-index' |
-    'PK-GSI2SK-index' |
-    'PK-GSI3SK-index' |
-    'GSI4PK-GSI4SK-index'
+    'GSI1' |
+    'GSI2' |
+    'GSI3' |
+    'GSI4' |
+    never;
 
+
+export type SecondaryIndexType = {
+    PK: string[],
+    SK: string[],
+    optional?: boolean,
+}
 
 export interface TableInterface<T extends Object = any> {
     tableName: string,
@@ -17,25 +24,25 @@ export interface TableInterface<T extends Object = any> {
 export class FeedTable implements TableInterface {
     tableName = 'feed';
     secondaryIndexMap: { [indexAttributeName in AllowedTableSecondaryIndexes]: SecondaryIndexInterface } = {
-        'PK-GSI1SK-index': {
+        'GSI1': {
             globalOrLocal: 'global',
             indexAttributeName: 'GSI1PK-GSI1SK-index',
-            PK: 'PK',
+            PK: 'GSI1PK',
             SK: 'GSI1SK',
         },
-        'PK-GSI2SK-index': {
+        'GSI2': {
             globalOrLocal: 'global',
-            indexAttributeName: 'PK-GSI2SK-index',
-            PK: 'PK',
+            indexAttributeName: 'GSI2PK-GSI2SK-index',
+            PK: 'GSI2PK',
             SK: 'GSI2SK',
         },
-        'PK-GSI3SK-index': {
+        'GSI3': {
             globalOrLocal: 'global',
-            indexAttributeName: 'PK-GSI3SK-index',
-            PK: 'PK',
+            indexAttributeName: 'GSI3PK-GSI3SK-index',
+            PK: 'GSI3PK',
             SK: 'GSI3SK',
         },
-        'GSI4PK-GSI4SK-index': {
+        'GSI4': {
             globalOrLocal: 'global',
             indexAttributeName: 'GSI4PK-GSI4SK-index',
             PK: 'GSI4PK',
@@ -46,15 +53,13 @@ export class FeedTable implements TableInterface {
 
 export interface EntityTableInterface {
     table: FeedTable;
+    entity: string;
     keyMap: {
-        PK: string,
-        SK: string,
+        PK: string[],
+        SK: string[],
     };
     secondaryIndexMap: {
-        [secondaryIndexName in AllowedTableSecondaryIndexes]?: {
-            PK?: string,
-            SK: string,
-        }
+        [secondaryIndexName in AllowedTableSecondaryIndexes]?: SecondaryIndexType
     };
     // projectExpressionColumns: string[]
 }

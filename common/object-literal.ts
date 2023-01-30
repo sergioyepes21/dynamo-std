@@ -1,2 +1,2 @@
 
-export type ObjectLiteral<T = any> = { [key in keyof Partial<T>]: any }
+export type ObjectLiteral<T> = { [key in keyof Partial<T>]: any }
